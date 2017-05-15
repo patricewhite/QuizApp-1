@@ -18,9 +18,9 @@ const Question = [
 const appState = {
   question: Question,
   answer: Answers,
-  userAnswer: [0, 0, 0],
+  userAnswer: [0, 0, 2],
   currentQuestion: 4,
-  score: -1
+  score: 0
 };
 
 function updateCurQuestion(appState){
@@ -38,31 +38,36 @@ function addAnswer(appState, answer){
 //Current tally of right answers.
 function numRightAnswers(appState){
   let numRights = 0;
-  appState.userAnswer.forEach(function(element, numRights){
+  appState.userAnswer.forEach(function(element){
     if(element === 0){
+      //console.log("hellloooooooo");
       numRights++;
+      //console.log(numRights);
     }
   });
-  //   element => 
+  //   element =>
   //   if(element === 0){
   //     numRights++;
   //   }
   // );
+  //console.log(numRights);
   return numRights;
 }
 
 //Should be a final score.
 function calcScore(appState){
 
-  if( appState.score === -1){
+  if(appState.score === -1){
     appState.score = appState.userAnswer[0];
+    //console.log(appState.score);
   }
   else{
     let currScore = appState.score;
-    currScore = appState.userAnswer.forEach(function(element, currScore){
+    appState.userAnswer.forEach(function(element){
       currScore += element;
+      console.log(element);
     });
-    appState.score = currScore; 
+    appState.score = currScore;
   }
 }
 
@@ -86,6 +91,15 @@ function displayQuestion(appState){
 }
 }
 
+function renderQuestion(appState){
+  const Currquestion = appState.currentQuestion;
+  let html = displayQuestion(appState);
+  html += `${Currquestion} out of ${appState.question.length}
+  <input type="button" name="submit" value="submit">`;
+  console.log(html);
+  //element.html(html);
+}
+
 
 function displayAnswer(appState){
   const current = appState.currentQuestion;
@@ -99,7 +113,30 @@ function displayAnswer(appState){
   }
 }
 
+function displayComplete(appState){
+  const done = appState.currentQuestion;
+  calcScore(appState);
+  const total = appState.score;
+  let correct = numRightAnswers(appState);
+  // appState.userAnswer.forEach(function(element){
+  //   if(element === 0){
+  //     correct++;
+  //   }
+  // });
+  let html = '';
+  console.log(total);
+  if( total === 0){
+  html += `<div>Way to go. You know your stuff.`;
+  }else{
+  html += `<div>Better luck next time.`;
+  }
+  html += `You got ${correct} out of ${appState.question.length}</div>
+  <input type="button" name="new quiz" value="new quiz">`;
+  console.log(html);
+}
+
 
 //Listeners - will call state mod & rendering functions
 console.log(displayQuestion(appState));
-
+renderQuestion(appState);
+displayComplete(appState);
