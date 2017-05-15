@@ -72,7 +72,7 @@ function displayQuestion(appState){
   const question = appState.question[appState.currentQuestion];
   const answers = appState.answer[appState.currentQuestion];
 
-  if(appState.currentQuestion < 4){
+  if(answers.length < 4){
     return `<legend>${question}?</legend>
           <input type="radio" name="answer-1" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
           <input type="radio" name="answer-2" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
