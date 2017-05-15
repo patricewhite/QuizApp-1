@@ -18,21 +18,27 @@ const Question = [
 const appState = {
   question: Question,
   answer: Answers,
-  userAnswer: [0, 0, 2],
-  currentQuestion: 4,
-  score: 0
+  userAnswer: [],
+  currentQuestion: -1,
+  score: -1
 };
 
 function updateCurQuestion(appState){
   appState.currentQuestion++;
+  console.log(appState.currentQuestion);
 }
 
 function getQuestion(appState){
   return appState.question[appState.currentQuestion];
 }
 
+function getAnswers(appState){
+  return appState.answer[appState.currentQuestion];
+}
+
 function addAnswer(appState, answer){
-  appState.userAnswer.push(answer);
+  appState.userAnswer.push(answer|0);
+  console.log(appState.userAnswer);
 }
 
 //Current tally of right answers.
@@ -74,42 +80,52 @@ function calcScore(appState){
 
 //Rendering function
 function displayQuestion(appState){
-  const question = appState.question[appState.currentQuestion];
-  const answers = appState.answer[appState.currentQuestion];
+  console.log(appState.currentQuestion);
+  const question = getQuestion(appState);
+  const answers = getAnswers(appState);
 
   if(answers.length < 4){
     return `<legend>${question}?</legend>
-          <input type="radio" name="answer-1" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
-          <input type="radio" name="answer-2" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
+          <input type="radio" name="answer" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
+          <input type="radio" name="answer" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
   }else{
     return `<legend>${question}?</legend>
-          <input type="radio" name="answer-1" id="ans-right" value="0" checked><label for="ans-right">${answers[0]}</label>
-          <input type="radio" name="answer-2" id="ans-wrong-1" value="1"><label for="ans-wrong-1">${answers[1]}</label>
-          <input type="radio" name="answer-3" id="ans-wrong-2" value="2"><label for="ans-wrong-2">${answers[2]}</label>
-          <input type="radio" name="answer-4" id="ans-wrong-3" value="2"><label for="ans-wrong-3">${answers[3]}</label>
+          <input type="radio" name="answer" id="ans-right" value="0" checked><label for="ans-right">${answers[0]}</label>
+          <input type="radio" name="answer" id="ans-wrong-1" value="1"><label for="ans-wrong-1">${answers[1]}</label>
+          <input type="radio" name="answer" id="ans-wrong-2" value="2"><label for="ans-wrong-2">${answers[2]}</label>
+          <input type="radio" name="answer" id="ans-wrong-3" value="2"><label for="ans-wrong-3">${answers[3]}</label>
   `;
 }
 }
 
-function renderQuestion(appState){
-  const Currquestion = appState.currentQuestion;
-  let html = displayQuestion(appState);
-  html += `${Currquestion} out of ${appState.question.length}
-  <input type="button" name="submit" value="submit">`;
-  console.log(html);
-  //element.html(html);
+function renderQuestion(appState, element){
+  let Currquestion = appState.currentQuestion;
+  console.log(appState.currentQuestion);
+  console.log(Currquestion);
+  if(Currquestion < 0){
+    Currquestion = 0; 
+    updateCurQuestion(appState);
+  }
+  let printHTML = displayQuestion(appState);
+  printHTML += `${Currquestion} out of ${appState.question.length}
+  <input type="button" class="ansQuest" name="submit" value="submit">`;
+  console.log(printHTML);
+  element.html(printHTML);
 }
 
 
+//START HERE - LOOK AT MEEEEEEEEEE
 function displayAnswer(appState){
   const current = appState.currentQuestion;
+  console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
+  console.log("ME ME EMEMEME " + uA);
 
   if(uA !== 0){
-    alert(`You're wrong. The answer is ${appState.answer[0]}. `);
+    alert(`You're wrong. The answer is ${appState.answer[current][0]}. `);
   }
   else{
-    alert(`Yup, you got it. The answer is ${appState.answer[0]}. `);
+    alert(`Yup, you got it. ${appState.answer[current][0]}. `);
   }
 }
 
@@ -137,6 +153,40 @@ function displayComplete(appState){
 
 
 //Listeners - will call state mod & rendering functions
-console.log(displayQuestion(appState));
-renderQuestion(appState);
-displayComplete(appState);
+function addListeners(){
+
+  $(".container").on("click", '.start_quiz', function(event){
+    event.preventDefault();
+    renderQuestion(appState, $('.container'));
+  });
+
+  $(".container").on("click", '.ansQuest', function(event){
+    event.preventDefault();
+    const clickedItem = ($("input[name='answer']:checked").val());
+    addAnswer(appState, clickedItem);
+    displayAnswer(appState);
+    renderQuestion(appState, $('.container'));
+  });
+
+  // $(".container").on("click", '.start_quiz', function(event){
+  //   event.preventDefault();
+  //   renderQuestion(appState, $('.container'));
+  // });
+
+  // $( "button.alert" ).on( "click", function() {
+  //       event.preventDefault();
+  //       console.log( "A button with the alert class was clicked!" );
+  //   });
+ 
+}
+
+$(function () {
+
+addListeners();
+
+});
+
+
+//console.log(displayQuestion(appState));
+//renderQuestion(appState);
+//displayComplete(appState);
