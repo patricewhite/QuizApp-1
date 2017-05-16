@@ -64,32 +64,7 @@ function numRightAnswers(appState){
     }
   }
   appState.score = numRights;
-  //return numRights;
-  // appState.userAnswer.forEach(function(element){
-  //   if(element === 0){
-  //     //console.log("hellloooooooo");
-  //     numRights++;
-  //     //console.log(numRights);
-  //   }
-  // });
 }
-
-//Should be a final score.
-// function calcScore(appState){
-//
-//   if(appState.score === -1){
-//     appState.score = appState.userAnswer[0];
-//     //console.log(appState.score);
-//   }
-//   else{
-//     let currScore = appState.score;
-//     appState.userAnswer.forEach(function(element){
-//       currScore += element;
-//       console.log(element);
-//     });
-//     appState.score = currScore;
-//   }
-// }
 
 
 //Rendering function
@@ -111,19 +86,6 @@ function displayQuestion(appState){
   returnHTML; // += `</div>`;
   console.log(returnHTML);
   return returnHTML;
-
-//   if(answers.length < 4){
-//     return `<legend>${question}?</legend>
-//           <input type="radio" name="answer" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
-//           <input type="radio" name="answer" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
-//   }else{
-//     return `<legend>${question}?</legend>
-//           <input type="radio" name="answer" id="ans-right" value="0" checked><label for="ans-right">${answers[0]}</label>
-//           <input type="radio" name="answer" id="ans-wrong-1" value="1"><label for="ans-wrong-1">${answers[1]}</label>
-//           <input type="radio" name="answer" id="ans-wrong-2" value="2"><label for="ans-wrong-2">${answers[2]}</label>
-//           <input type="radio" name="answer" id="ans-wrong-3" value="2"><label for="ans-wrong-3">${answers[3]}</label>
-//   `;
-// }
 }
 
 function renderQuestion(appState, element){
@@ -142,12 +104,16 @@ function renderQuestion(appState, element){
 //fixed
 function displayAnswer(appState, element){
   const current = appState.currentQuestion;
-  //console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
   const right = appState.rightAns[current];
   //console.log("ME ME EMEMEME " + uA);
-//console.log("question "+current);
-//console.log("length "+appState.userAnswer.length);
+  //console.log("question "+current);
+  //console.log("length "+appState.userAnswer.length);
+  if(current >= appState.question.length){
+    element.hide();
+    return;
+  }
+
   if(current >= appState.userAnswer.length){
     element.hide();
   }
@@ -221,13 +187,11 @@ function addListeners(){
     const selected = (checkedItem.val());
     const id = (checkedItem.attr("id"));
     console.log($(`input[name='answer'][id='${id}']:checked`));
-    //console.log(id);
     if(selected){
       addAnswer(appState, selected);
       numRightAnswers(appState);
       displayAnswer(appState, $("div.container"));
       renderQuestion(appState, $('form.container'));
-      //($("div.container")).show();
     }
     else{
       alert("Please provide an answer!");
@@ -237,14 +201,13 @@ function addListeners(){
 
   $("div.container").on("click", '.nextQ', function(event){
       event.preventDefault();
-      //$("div.container").hide();
+    
       updateCurQuestion(appState);
       displayAnswer(appState, $("div.container"));
-      if(appState.currentQuestion < appState.question.length-1){
+      if(appState.currentQuestion < appState.question.length){
         renderQuestion(appState, $('form.container'));
       }
       else{
-        //console.log(appState.currentQuestion);
         displayComplete(appState, $('form.container'));
       }
 
@@ -264,7 +227,3 @@ addListeners();
 
 });
 
-
-//console.log(displayQuestion(appState));
-//renderQuestion(appState);
-//displayComplete(appState);
