@@ -31,7 +31,6 @@ header, footer{
 	padding: 8px;
 	text-indent: 10px;
 
-
 }
 
 footer{
@@ -49,16 +48,6 @@ footer{
   padding-top: 30px;
 }
 
-.shopping-list {
-  list-style: none;
-  padding-left: 0;
-}
-
-.shopping-list > li {
-  margin-bottom: 20px;
-  
-}
-
 .quiz-item {
   display: block;
   color: grey;
@@ -68,3 +57,17 @@ footer{
   border: 1px solid grey;
 }
 
+/*label[for=ans-right]{
+  color: green;
+}
+
+label[for=ans-wrong]{
+  color: red;
+}*/
+
+ /*.radio-right:checked + .label-right{
+  color: green;
+}
+.radio-wrong:checked + .label-wrong{
+  color:red;
+}*/

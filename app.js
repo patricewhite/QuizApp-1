@@ -26,6 +26,11 @@ const appState = {
   score: -1
 };
 
+function startQuiz(appState){
+  appState.currentQuestion = 0;
+  appState.score = 0;
+}
+
 function updateCurQuestion(appState){
   appState.currentQuestion++;
   console.log(appState.currentQuestion);
@@ -96,11 +101,11 @@ function displayQuestion(appState){
   let returnHTML =  `<div class="quiz-item"><legend>${question}?</legend>`;
 
   for(let i = 0; i < answers.length; i++){
-    if(i === 0){
-      returnHTML += `<div><input type="radio" name="answer" id="ans-right" value="${i}"><label for="ans-right">${answers[i]}</label></div>`;
+    if(i === appState.rightAns[appState.currentQuestion]){
+      returnHTML += `<div><input  class="radio-right" type="radio" name="answer" id="ans-right" value="${i}"><label class="label-right" for="ans-right">${answers[i]}</label></div>`;
     }
     else{
-      returnHTML += `<div><input type="radio" name="answer" id="ans-wrong" value="${i}"><label for="ans-wrong">${answers[i]}</label></div>`;
+      returnHTML += `<div><input class="radio-wrong" type="radio" name="answer" id="ans-wrong" value="${i}"><label  class="label-wrong" for="ans-wrong">${answers[i]}</label></div>`;
     }
   }
   returnHTML; // += `</div>`;
@@ -124,13 +129,6 @@ function displayQuestion(appState){
 function renderQuestion(appState, element){
   let Currquestion = appState.currentQuestion;
   let answered = appState.userAnswer.length;
-  numRightAnswers(appState);
-  //console.log(appState.currentQuestion);
-  //console.log(Currquestion);
-  if(Currquestion < 0){
-    Currquestion = 0;
-    updateCurQuestion(appState);
-  }
   let printHTML = displayQuestion(appState);
   printHTML += `
   <div>Question: ${Currquestion+1} out of ${appState.question.length}</div>
@@ -141,15 +139,22 @@ function renderQuestion(appState, element){
 }
 
 
-//START HERE - LOOK AT MEEEEEEEEEE
+//fixed
 function displayAnswer(appState, element){
   const current = appState.currentQuestion;
   //console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
   const right = appState.rightAns[current];
   //console.log("ME ME EMEMEME " + uA);
-  html = `<div class="quiz-item">`;
-
+//console.log("question "+current);
+//console.log("length "+appState.userAnswer.length);
+  if(current >= appState.userAnswer.length){
+    element.hide();
+  }
+  else{
+    element.show();
+  }
+  let html = `<div class="quiz-item">`;
   if(uA != right){
     html += `You're wrong. The answer is ${appState.answer[current][right]} `;
   }
@@ -161,21 +166,10 @@ function displayAnswer(appState, element){
   //element.show();
 }
 
-//1/1
-//1/2
-//2/3
-
+//Fixed
 function displayComplete(appState, element){
   const done = appState.currentQuestion;
-  // calcScore(appState);
-  //const total = appState.score;
-  numRightAnswers(appState);
   const correct =  appState.score;
-  // appState.userAnswer.forEach(function(element){
-  //   if(element === 0){
-  //     correct++;
-  //   }
-  // });
   let html = '';
   console.log("WHAT IS HAPPENING?!?!" + correct);
   if(correct === appState.rightAns.length){
@@ -185,7 +179,7 @@ function displayComplete(appState, element){
   }else{
     html += `<div class="quiz-item">Better luck next time.`;
   }
-  html += ` You got ${correct} out of ${appState.question.length}. 
+  html += ` You got ${correct} out of ${appState.question.length}.
   Your score is ${correct/appState.question.length*100}%.
   <input type="button" class="new-quiz" name="new-quiz" value="new quiz"></div>`;
   //console.log(html);
@@ -203,7 +197,10 @@ function displayStart(appState, element){
 
   element.html(start);
 }
-
+// function highlight(){
+//   $('label[for=ans-right]').addClass("green");
+//   $('label[for=(input[name='answer']:checked).id]').addClass("red");
+// }
 
 //Listeners - will call state mod & rendering functions
 function addListeners(){
@@ -214,17 +211,23 @@ function addListeners(){
 
   $(".container").on("click", '.start_quiz', function(event){
     event.preventDefault();
+    startQuiz(appState);
     renderQuestion(appState, $('form.container'));
   });
 
   $("body").on("click", '.ansQuest', function(event){
     event.preventDefault();
-    const selected = ($("input[name='answer']:checked").val());
+    const checkedItem = $("input[name='answer']:checked");
+    const selected = (checkedItem.val());
+    const id = (checkedItem.attr("id"));
+    console.log($(`input[name='answer'][id='${id}']:checked`));
+    //console.log(id);
     if(selected){
-      const showAns = ($("div.container"));
       addAnswer(appState, selected);
-      displayAnswer(appState, showAns);
-      showAns.show();
+      numRightAnswers(appState);
+      displayAnswer(appState, $("div.container"));
+      renderQuestion(appState, $('form.container'));
+      //($("div.container")).show();
     }
     else{
       alert("Please provide an answer!");
@@ -234,9 +237,10 @@ function addListeners(){
 
   $("div.container").on("click", '.nextQ', function(event){
       event.preventDefault();
-      $("div.container").hide();
+      //$("div.container").hide();
+      updateCurQuestion(appState);
+      displayAnswer(appState, $("div.container"));
       if(appState.currentQuestion < appState.question.length-1){
-        updateCurQuestion(appState);
         renderQuestion(appState, $('form.container'));
       }
       else{
