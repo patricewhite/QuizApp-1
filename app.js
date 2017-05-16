@@ -58,7 +58,8 @@ function numRightAnswers(appState){
       numRights++;
     }
   }
-  return numRights;
+  appState.score = numRights;
+  //return numRights;
   // appState.userAnswer.forEach(function(element){
   //   if(element === 0){
   //     //console.log("hellloooooooo");
@@ -122,15 +123,19 @@ function displayQuestion(appState){
 
 function renderQuestion(appState, element){
   let Currquestion = appState.currentQuestion;
-  console.log(appState.currentQuestion);
-  console.log(Currquestion);
+  let answered = appState.userAnswer.length;
+  numRightAnswers(appState);
+  //console.log(appState.currentQuestion);
+  //console.log(Currquestion);
   if(Currquestion < 0){
     Currquestion = 0;
     updateCurQuestion(appState);
   }
   let printHTML = displayQuestion(appState);
-  printHTML += `<div>${Currquestion+1} out of ${appState.question.length}
-  <input type="button" class="ansQuest" name="submit" value="submit"></div></div>`;
+  printHTML += `
+  <div>Question: ${Currquestion+1} out of ${appState.question.length}</div>
+  <div>Score: ${appState.score} out of ${answered}</div>
+  <div><input type="button" class="ansQuest" name="submit" value="submit"></div></div>`;
   console.log(printHTML);
   element.html(printHTML);
 }
@@ -156,12 +161,16 @@ function displayAnswer(appState, element){
   //element.show();
 }
 
+//1/1
+//1/2
+//2/3
+
 function displayComplete(appState, element){
   const done = appState.currentQuestion;
   // calcScore(appState);
   //const total = appState.score;
-  let correct = numRightAnswers(appState);
-  appState.score = correct;
+  numRightAnswers(appState);
+  const correct =  appState.score;
   // appState.userAnswer.forEach(function(element){
   //   if(element === 0){
   //     correct++;
@@ -176,7 +185,8 @@ function displayComplete(appState, element){
   }else{
     html += `<div class="quiz-item">Better luck next time.`;
   }
-  html += `You got ${correct} out of ${appState.question.length}
+  html += ` You got ${correct} out of ${appState.question.length}. 
+  Your score is ${correct/appState.question.length*100}%.
   <input type="button" class="new-quiz" name="new-quiz" value="new quiz"></div>`;
   //console.log(html);
   element.html(html);
@@ -185,7 +195,8 @@ function displayComplete(appState, element){
 function displayStart(appState, element){
   const start = `
       <div class="intro">
-        Welcome to this Pop culture quiz.
+        <h2>Welcome to this Pop culture quiz</h2>
+        <h3>May the odds be ever in your favor</h3>
 
       </div>
       <input type="button" class="start_quiz" name="Start" value="Start Quiz">`;
@@ -209,10 +220,16 @@ function addListeners(){
   $("body").on("click", '.ansQuest', function(event){
     event.preventDefault();
     const selected = ($("input[name='answer']:checked").val());
-    const showAns = ($("div.container"));
-    addAnswer(appState, selected);
-    displayAnswer(appState, showAns);
-    showAns.show();
+    if(selected){
+      const showAns = ($("div.container"));
+      addAnswer(appState, selected);
+      displayAnswer(appState, showAns);
+      showAns.show();
+    }
+    else{
+      alert("Please provide an answer!");
+      return;
+    }
   });
 
   $("div.container").on("click", '.nextQ', function(event){
