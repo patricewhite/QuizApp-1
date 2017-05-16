@@ -3,9 +3,9 @@
 
 //state objects
 const Answers = [
-    ["Obviously.", "I'm Lame."], ["OF COURSE", "I live under a rock."],
-    ["Always", "The Browns?"], ["Is there anyone greater?", "What about MJ?"],
-    ["Will Smith", "P Diddy", "Kanye", "Some guy?"]
+    ["Who cares?", "Obviously.", "I'm Lame.", "It is what it is"], ["OF COURSE", "I live under a rock.", "Superman all the way", "DC is over rated"],
+    ["The Browns?", "What sport is this?", "Redskins are awesome!", "Always"], ["Is there anyone greater?", "What about MJ?", "Tennis is so boring", "Who cares"],
+    ["P Diddy", "Kanye","Will Smith", "Some guy?"]
 ];
 
 const Question = [
@@ -14,10 +14,13 @@ const Question = [
   "Who sang Wild Wild West"
 ];
 
+const rightAnswers = [1, 0, 3, 0, 2];
+
 
 const appState = {
   question: Question,
   answer: Answers,
+  rightAns: rightAnswers,
   userAnswer: [],
   currentQuestion: -1,
   score: -1
@@ -50,32 +53,37 @@ function resetDefaults(appState){
 //Current tally of right answers.
 function numRightAnswers(appState){
   let numRights = 0;
-  appState.userAnswer.forEach(function(element){
-    if(element === 0){
-      //console.log("hellloooooooo");
+  for(let i = 0; i < appState.rightAns.length; i++){
+    if(appState.userAnswer[i] === appState.rightAns[i]){
       numRights++;
-      //console.log(numRights);
     }
-  });
+  }
   return numRights;
+  // appState.userAnswer.forEach(function(element){
+  //   if(element === 0){
+  //     //console.log("hellloooooooo");
+  //     numRights++;
+  //     //console.log(numRights);
+  //   }
+  // });
 }
 
 //Should be a final score.
-function calcScore(appState){
-
-  if(appState.score === -1){
-    appState.score = appState.userAnswer[0];
-    //console.log(appState.score);
-  }
-  else{
-    let currScore = appState.score;
-    appState.userAnswer.forEach(function(element){
-      currScore += element;
-      console.log(element);
-    });
-    appState.score = currScore;
-  }
-}
+// function calcScore(appState){
+//
+//   if(appState.score === -1){
+//     appState.score = appState.userAnswer[0];
+//     //console.log(appState.score);
+//   }
+//   else{
+//     let currScore = appState.score;
+//     appState.userAnswer.forEach(function(element){
+//       currScore += element;
+//       console.log(element);
+//     });
+//     appState.score = currScore;
+//   }
+// }
 
 
 //Rendering function
@@ -117,7 +125,7 @@ function renderQuestion(appState, element){
   console.log(appState.currentQuestion);
   console.log(Currquestion);
   if(Currquestion < 0){
-    Currquestion = 0; 
+    Currquestion = 0;
     updateCurQuestion(appState);
   }
   let printHTML = displayQuestion(appState);
@@ -149,18 +157,21 @@ function displayAnswer(appState, element){
 
 function displayComplete(appState, element){
   const done = appState.currentQuestion;
-  calcScore(appState);
-  const total = appState.score;
+  // calcScore(appState);
+  //const total = appState.score;
   let correct = numRightAnswers(appState);
+  appState.score = correct;
   // appState.userAnswer.forEach(function(element){
   //   if(element === 0){
   //     correct++;
   //   }
   // });
   let html = '';
-  console.log("WHAT IS HAPPENING?!?!" + total);
-  if( total === 0){
+  console.log("WHAT IS HAPPENING?!?!" + correct);
+  if(correct === appState.rightAns.length){
   html += `<div class="quiz-item">Way to go. You know your stuff.`;
+}else if(correct >= Math.floor(appState.rightAns.length/2)){
+  html += `<div class="quiz-item">You're on your way.`;
   }else{
   html += `<div class="quiz-item">Better luck next time.`;
   }
@@ -211,7 +222,7 @@ function addListeners(){
         renderQuestion(appState, $('form.container'));
       }
       else{
-        console.log(appState.currentQuestion);
+        //console.log(appState.currentQuestion);
         displayComplete(appState, $('form.container'));
       }
 
@@ -222,7 +233,7 @@ function addListeners(){
     resetDefaults(appState);
     displayStart(appState, $("form.container"));
   });
- 
+
 }
 
 $(function () {
