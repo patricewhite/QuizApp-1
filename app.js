@@ -41,6 +41,12 @@ function addAnswer(appState, answer){
   console.log(appState.userAnswer);
 }
 
+function resetDefaults(appState){
+  appState.userAnswer = [];
+  appState.currentQuestion = -1;
+  appState.score = -1;
+}
+
 //Current tally of right answers.
 function numRightAnswers(appState){
   let numRights = 0;
@@ -51,12 +57,6 @@ function numRightAnswers(appState){
       //console.log(numRights);
     }
   });
-  //   element =>
-  //   if(element === 0){
-  //     numRights++;
-  //   }
-  // );
-  //console.log(numRights);
   return numRights;
 }
 
@@ -129,18 +129,22 @@ function renderQuestion(appState, element){
 
 
 //START HERE - LOOK AT MEEEEEEEEEE
-function displayAnswer(appState){
+function displayAnswer(appState, element){
   const current = appState.currentQuestion;
   //console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
   //console.log("ME ME EMEMEME " + uA);
+  html = `<div class="quiz-item">`;
 
   if(uA !== 0){
-    alert(`You're wrong. The answer is ${appState.answer[current][0]} `);
+    html += `You're wrong. The answer is ${appState.answer[current][0]} `;
   }
   else{
-    alert(`Yup, you got it. ${appState.answer[current][0]} `);
+    html += `Yup, you got it. ${appState.answer[current][0]} `;
   }
+  html += `<input type="button" class="nextQ" name="nextQ" value="next"></div>`;
+  element.html(html);
+  //element.show();
 }
 
 function displayComplete(appState, element){
@@ -161,44 +165,63 @@ function displayComplete(appState, element){
   html += `<div class="quiz-item">Better luck next time.`;
   }
   html += `You got ${correct} out of ${appState.question.length}
-  <input type="button" name="new quiz" value="new quiz"></div>`;
+  <input type="button" class="new-quiz" name="new-quiz" value="new quiz"></div>`;
   //console.log(html);
   element.html(html);
+}
+
+function displayStart(appState, element){
+  const start = `<h1>Quiz Name</h1>
+      <div class="">
+        Welcome to this Pop culture quiz.
+
+      </div>
+      <input type="button" class="start_quiz" name="Start" value="Start Quiz">`;
+
+  element.html(start);
 }
 
 
 //Listeners - will call state mod & rendering functions
 function addListeners(){
 
+  $("form.container").ready(function(event){
+    displayStart(appState, $("form.container"));
+  });
+
   $(".container").on("click", '.start_quiz', function(event){
     event.preventDefault();
-    renderQuestion(appState, $('.container'));
+    renderQuestion(appState, $('form.container'));
   });
 
-  $(".container").on("click", '.ansQuest', function(event){
+  $("body").on("click", '.ansQuest', function(event){
     event.preventDefault();
-    const clickedItem = ($("input[name='answer']:checked").val());
-    addAnswer(appState, clickedItem);
-    displayAnswer(appState);
-    if(appState.currentQuestion < appState.question.length-1){
-      updateCurQuestion(appState);
-      renderQuestion(appState, $('.container'));
-    }
-    else{
-      console.log(appState.currentQuestion);
-      displayComplete(appState, $('.container'));
-    }
+    const selected = ($("input[name='answer']:checked").val());
+    const showAns = ($("div.container"));
+    addAnswer(appState, selected);
+    displayAnswer(appState, showAns);
+    showAns.show();
   });
 
-  // $(".container").on("click", '.start_quiz', function(event){
-  //   event.preventDefault();
-  //   renderQuestion(appState, $('.container'));
-  // });
+  $("div.container").on("click", '.nextQ', function(event){
+      event.preventDefault();
+      $("div.container").hide();
+      if(appState.currentQuestion < appState.question.length-1){
+        updateCurQuestion(appState);
+        renderQuestion(appState, $('form.container'));
+      }
+      else{
+        console.log(appState.currentQuestion);
+        displayComplete(appState, $('form.container'));
+      }
 
-  // $( "button.alert" ).on( "click", function() {
-  //       event.preventDefault();
-  //       console.log( "A button with the alert class was clicked!" );
-  //   });
+  });
+
+  $(".container").on("click", '.new-quiz', function(event){
+    event.preventDefault();
+    resetDefaults(appState);
+    displayStart(appState, $("form.container"));
+  });
  
 }
 
