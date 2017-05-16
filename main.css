@@ -6,12 +6,17 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-button, input[type="text"] {
-  padding: 5px;
+button, input[type="radio"] {
+  padding: 15px;
 }
 
 button:hover {
   cursor: pointer;
+}
+
+legend{
+	display: inline-block;
+	margin-bottom: 10px;
 }
 
 #shopping-list-item {
@@ -30,16 +35,17 @@ button:hover {
 
 .shopping-list > li {
   margin-bottom: 20px;
-  border: 1px solid grey;
-  padding: 20px;
+  
 }
 
-.shopping-item {
+.quiz-item {
   display: block;
   color: grey;
   font-style: italic;
   font-size: 20px;
-  margin-bottom: 15px;
+  padding: 20px;
+  margin: 15px;
+  border: 1px solid grey;
 }
 
 .shopping-item__checked {

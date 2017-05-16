@@ -3,13 +3,13 @@
 
 //state objects
 const Answers = [
-    ["Obviously", "I'm Lame"], ["OF COURSE!!!", "I live under a rock"],
+    ["Obviously.", "I'm Lame."], ["OF COURSE", "I live under a rock."],
     ["Always", "The Browns?"], ["Is there anyone greater?", "What about MJ?"],
     ["Will Smith", "P Diddy", "Kanye", "Some guy?"]
 ];
 
 const Question = [
-  "Does it suck that the Patriots won the superbowl", "Is Wonder Women the gratest female superhero",
+  "Does it suck that the Patriots won the superbowl", "Is Wonder Woman the greatest female superhero",
   "Are the Redskins worse than the Browns", "Is Serena Williams the greatest athlete of all time",
   "Who sang Wild Wild West"
 ];
@@ -84,18 +84,32 @@ function displayQuestion(appState){
   const question = getQuestion(appState);
   const answers = getAnswers(appState);
 
-  if(answers.length < 4){
-    return `<legend>${question}?</legend>
-          <input type="radio" name="answer" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
-          <input type="radio" name="answer" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
-  }else{
-    return `<legend>${question}?</legend>
-          <input type="radio" name="answer" id="ans-right" value="0" checked><label for="ans-right">${answers[0]}</label>
-          <input type="radio" name="answer" id="ans-wrong-1" value="1"><label for="ans-wrong-1">${answers[1]}</label>
-          <input type="radio" name="answer" id="ans-wrong-2" value="2"><label for="ans-wrong-2">${answers[2]}</label>
-          <input type="radio" name="answer" id="ans-wrong-3" value="2"><label for="ans-wrong-3">${answers[3]}</label>
-  `;
-}
+  let returnHTML =  `<div class="quiz-item"><legend>${question}?</legend>`;
+
+  for(let i = 0; i < answers.length; i++){
+    if(i === 0){
+      returnHTML += `<input type="radio" name="answer" id="ans-right" value="${i}"><label for="ans-right">${answers[i]}</label>`;
+    }
+    else{
+      returnHTML += `<input type="radio" name="answer" id="ans-wrong" value="${i}"><label for="ans-wrong">${answers[i]}</label>`;
+    }
+  }
+  returnHTML; // += `</div>`;
+  console.log(returnHTML);
+  return returnHTML;
+
+//   if(answers.length < 4){
+//     return `<legend>${question}?</legend>
+//           <input type="radio" name="answer" id="ans-right" value="0"><label for="ans-right">${answers[0]}</label>
+//           <input type="radio" name="answer" id="ans-wrong" value="1"><label for="ans-wrong">${answers[1]}</label>`;
+//   }else{
+//     return `<legend>${question}?</legend>
+//           <input type="radio" name="answer" id="ans-right" value="0" checked><label for="ans-right">${answers[0]}</label>
+//           <input type="radio" name="answer" id="ans-wrong-1" value="1"><label for="ans-wrong-1">${answers[1]}</label>
+//           <input type="radio" name="answer" id="ans-wrong-2" value="2"><label for="ans-wrong-2">${answers[2]}</label>
+//           <input type="radio" name="answer" id="ans-wrong-3" value="2"><label for="ans-wrong-3">${answers[3]}</label>
+//   `;
+// }
 }
 
 function renderQuestion(appState, element){
@@ -107,8 +121,8 @@ function renderQuestion(appState, element){
     updateCurQuestion(appState);
   }
   let printHTML = displayQuestion(appState);
-  printHTML += `${Currquestion} out of ${appState.question.length}
-  <input type="button" class="ansQuest" name="submit" value="submit">`;
+  printHTML += `<div>${Currquestion+1} out of ${appState.question.length}
+  <input type="button" class="ansQuest" name="submit" value="submit"></div></div>`;
   console.log(printHTML);
   element.html(printHTML);
 }
@@ -117,19 +131,19 @@ function renderQuestion(appState, element){
 //START HERE - LOOK AT MEEEEEEEEEE
 function displayAnswer(appState){
   const current = appState.currentQuestion;
-  console.log("RIGHT HERE " + current);
+  //console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
-  console.log("ME ME EMEMEME " + uA);
+  //console.log("ME ME EMEMEME " + uA);
 
   if(uA !== 0){
-    alert(`You're wrong. The answer is ${appState.answer[current][0]}. `);
+    alert(`You're wrong. The answer is ${appState.answer[current][0]} `);
   }
   else{
-    alert(`Yup, you got it. ${appState.answer[current][0]}. `);
+    alert(`Yup, you got it. ${appState.answer[current][0]} `);
   }
 }
 
-function displayComplete(appState){
+function displayComplete(appState, element){
   const done = appState.currentQuestion;
   calcScore(appState);
   const total = appState.score;
@@ -140,15 +154,16 @@ function displayComplete(appState){
   //   }
   // });
   let html = '';
-  console.log(total);
+  console.log("WHAT IS HAPPENING?!?!" + total);
   if( total === 0){
-  html += `<div>Way to go. You know your stuff.`;
+  html += `<div class="quiz-item">Way to go. You know your stuff.`;
   }else{
-  html += `<div>Better luck next time.`;
+  html += `<div class="quiz-item">Better luck next time.`;
   }
-  html += `You got ${correct} out of ${appState.question.length}</div>
-  <input type="button" name="new quiz" value="new quiz">`;
-  console.log(html);
+  html += `You got ${correct} out of ${appState.question.length}
+  <input type="button" name="new quiz" value="new quiz"></div>`;
+  //console.log(html);
+  element.html(html);
 }
 
 
@@ -165,7 +180,14 @@ function addListeners(){
     const clickedItem = ($("input[name='answer']:checked").val());
     addAnswer(appState, clickedItem);
     displayAnswer(appState);
-    renderQuestion(appState, $('.container'));
+    if(appState.currentQuestion < appState.question.length-1){
+      updateCurQuestion(appState);
+      renderQuestion(appState, $('.container'));
+    }
+    else{
+      console.log(appState.currentQuestion);
+      displayComplete(appState, $('.container'));
+    }
   });
 
   // $(".container").on("click", '.start_quiz', function(event){
