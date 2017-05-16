@@ -96,10 +96,10 @@ function displayQuestion(appState){
 
   for(let i = 0; i < answers.length; i++){
     if(i === 0){
-      returnHTML += `<input type="radio" name="answer" id="ans-right" value="${i}"><label for="ans-right">${answers[i]}</label>`;
+      returnHTML += `<div><input type="radio" name="answer" id="ans-right" value="${i}"><label for="ans-right">${answers[i]}</label></div>`;
     }
     else{
-      returnHTML += `<input type="radio" name="answer" id="ans-wrong" value="${i}"><label for="ans-wrong">${answers[i]}</label>`;
+      returnHTML += `<div><input type="radio" name="answer" id="ans-wrong" value="${i}"><label for="ans-wrong">${answers[i]}</label></div>`;
     }
   }
   returnHTML; // += `</div>`;
@@ -141,14 +141,15 @@ function displayAnswer(appState, element){
   const current = appState.currentQuestion;
   //console.log("RIGHT HERE " + current);
   const uA = appState.userAnswer[current];
+  const right = appState.rightAns[current];
   //console.log("ME ME EMEMEME " + uA);
   html = `<div class="quiz-item">`;
 
-  if(uA !== 0){
-    html += `You're wrong. The answer is ${appState.answer[current][0]} `;
+  if(uA != right){
+    html += `You're wrong. The answer is ${appState.answer[current][right]} `;
   }
   else{
-    html += `Yup, you got it. ${appState.answer[current][0]} `;
+    html += `Yup, you got it. ${appState.answer[current][right]} `;
   }
   html += `<input type="button" class="nextQ" name="nextQ" value="next"></div>`;
   element.html(html);
@@ -169,11 +170,11 @@ function displayComplete(appState, element){
   let html = '';
   console.log("WHAT IS HAPPENING?!?!" + correct);
   if(correct === appState.rightAns.length){
-  html += `<div class="quiz-item">Way to go. You know your stuff.`;
-}else if(correct >= Math.floor(appState.rightAns.length/2)){
-  html += `<div class="quiz-item">You're on your way.`;
+    html += `<div class="quiz-item">Way to go. You know your stuff.`;
+  }else if(correct >= Math.floor(appState.rightAns.length/2)){
+    html += `<div class="quiz-item">You're on your way.`;
   }else{
-  html += `<div class="quiz-item">Better luck next time.`;
+    html += `<div class="quiz-item">Better luck next time.`;
   }
   html += `You got ${correct} out of ${appState.question.length}
   <input type="button" class="new-quiz" name="new-quiz" value="new quiz"></div>`;
@@ -182,8 +183,8 @@ function displayComplete(appState, element){
 }
 
 function displayStart(appState, element){
-  const start = `<h1>Quiz Name</h1>
-      <div class="">
+  const start = `
+      <div class="intro">
         Welcome to this Pop culture quiz.
 
       </div>

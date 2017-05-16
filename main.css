@@ -8,6 +8,8 @@ body {
 
 button, input[type="radio"] {
   padding: 15px;
+  margin-top: 15px;
+  margin-left: 10px;
 }
 
 button:hover {
@@ -19,13 +21,31 @@ legend{
 	margin-bottom: 10px;
 }
 
-#shopping-list-item {
-  width: 250px;
+
+header, footer{
+	width: 100%;
+	background-color: black;
+	height: 50px;
+	color: white;
+	font-size: 30px;
+	padding: 8px;
+	text-indent: 10px;
+
 }
 
+footer{
+	position: absolute;
+    bottom: 0;
+    margin-left: -8px;
+}
+
+
 .container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-top: 30px;
 }
 
 .shopping-list {
@@ -41,13 +61,9 @@ legend{
 .quiz-item {
   display: block;
   color: grey;
-  font-style: italic;
   font-size: 20px;
   padding: 20px;
   margin: 15px;
   border: 1px solid grey;
 }
 
-.shopping-item__checked {
-  text-decoration: line-through;
-}
